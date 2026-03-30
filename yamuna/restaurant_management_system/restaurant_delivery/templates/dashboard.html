@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Delivery System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🍕 Restaurant Delivery System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="/customers" class="nav-link">Customers</a></li>
+                <li><a href="/orders" class="nav-link">Orders</a></li>
+                <li><a href="/staff" class="nav-link">Staff</a></li>
+                <li><a href="/deliveries" class="nav-link">Deliveries</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Reports</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/reports/daily">Daily Report</a></li>
+                        <li><a href="/reports/staff-performance">Staff Performance</a></li>
+                        <li><a href="/reports/delayed-orders">Delayed Orders</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Dashboard</h2>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_customers }}</div>
+                <div class="stat-label">Total Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ total_orders }}</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ completed_deliveries }}</div>
+                <div class="stat-label">Completed Deliveries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ active_staff }}</div>
+                <div class="stat-label">Active Staff</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ avg_rating }}/5</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-section">
+                <h3>Quick Actions</h3>
+                <ul class="quick-actions">
+                    <li><a href="/customers" class="action-link">➕ Add Customer</a></li>
+                    <li><a href="/orders" class="action-link">📦 Create Order</a></li>
+                    <li><a href="/staff" class="action-link">👥 Manage Staff</a></li>
+                    <li><a href="/deliveries" class="action-link">🚚 Assign Delivery</a></li>
+                </ul>
+            </div>
+
+            <div class="dashboard-section">
+                <h3>Reports</h3>
+                <ul class="quick-actions">
+                    <li><a href="/reports/daily" class="action-link">📅 Daily Report</a></li>
+                    <li><a href="/reports/staff-performance" class="action-link">📊 Staff Performance</a></li>
+                    <li><a href="/reports/delayed-orders" class="action-link">⚠️ Delayed Orders</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Restaurant Delivery Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

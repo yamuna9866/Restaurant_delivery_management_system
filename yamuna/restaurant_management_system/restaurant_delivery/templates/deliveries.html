@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Deliveries</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🍕 Restaurant Delivery System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="/customers" class="nav-link">Customers</a></li>
+                <li><a href="/orders" class="nav-link">Orders</a></li>
+                <li><a href="/staff" class="nav-link">Staff</a></li>
+                <li><a href="/deliveries" class="nav-link active">Deliveries</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Manage Deliveries</h2>
+        
+        <div class="form-section">
+            <h3>Assign Delivery</h3>
+            <form id="deliveryForm">
+                <div class="form-group">
+                    <label for="order_id">Order (Pending):</label>
+                    <select id="order_id" name="order_id" required>
+                        <option value="">Select Order</option>
+                        {% for order in pending_orders %}
+                        <option value="{{ order.order_id }}">Order #{{ order.order_id }} - Customer ID: {{ order.customer_id }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="staff_id">Staff (Active):</label>
+                    <select id="staff_id" name="staff_id" required>
+                        <option value="">Select Staff</option>
+                        {% for member in staff %}
+                        <option value="{{ member.staff_id }}">{{ member.name }} - {{ member.phone }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="delivery_date">Delivery Date:</label>
+                    <input type="date" id="delivery_date" name="delivery_date" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Assign Delivery</button>
+            </form>
+        </div>
+
+        <div class="table-section">
+            <h3>Deliveries List</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Delivery ID</th>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Staff</th>
+                        <th>Delivery Date</th>
+                        <th>Time (mins)</th>
+                        <th>Status</th>
+                        <th>Rating</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for delivery in deliveries %}
+                    <tr>
+                        <td>{{ delivery.delivery_id }}</td>
+                        <td>{{ delivery.order_id }}</td>
+                        <td>{{ delivery.customer_name }}</td>
+                        <td>{{ delivery.staff_name }}</td>
+                        <td>{{ delivery.delivery_date }}</td>
+                        <td>{{ delivery.delivery_time or 'N/A' }}</td>
+                        <td><span class="badge badge-{{ delivery.delivery_status|lower }}">{{ delivery.delivery_status }}</span></td>
+                        <td>{{ delivery.rating or '-' }}/5</td>
+                        <td>
+                            <button class="btn btn-small btn-info" onclick="showUpdateForm({{ delivery.delivery_id }})">Update</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Update Delivery Modal -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Update Delivery</h3>
+            <form id="updateDeliveryForm">
+                <input type="hidden" id="delivery_id_update">
+                <div class="form-group">
+                    <label for="delivery_status">Status:</label>
+                    <select id="delivery_status" required>
+                        <option value="Pending">Pending</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="delivery_time_update">Delivery Time (minutes):</label>
+                    <input type="number" id="delivery_time_update" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="feedback_update">Feedback:</label>
+                    <textarea id="feedback_update"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="rating_update">Rating:</label>
+                    <select id="rating_update">
+                        <option value="">No Rating</option>
+                        <option value="1">⭐ 1 Star</option>
+                        <option value="2">⭐ 2 Stars</option>
+                        <option value="3">⭐ 3 Stars</option>
+                        <option value="4">⭐ 4 Stars</option>
+                        <option value="5">⭐ 5 Stars</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Delivery</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Restaurant Delivery Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        document.getElementById('deliveryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const order_id = document.getElementById('order_id').value;
+            const staff_id = document.getElementById('staff_id').value;
+            const delivery_date = document.getElementById('delivery_date').value;
+            
+            fetch('/deliveries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ order_id, staff_id, delivery_date })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Delivery assigned successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+        });
+
+        function showUpdateForm(deliveryId) {
+            document.getElementById('delivery_id_update').value = deliveryId;
+            document.getElementById('updateModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('updateModal').style.display = 'none';
+        }
+
+        document.getElementById('updateDeliveryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const delivery_id = document.getElementById('delivery_id_update').value;
+            const delivery_status = document.getElementById('delivery_status').value;
+            const delivery_time_raw = document.getElementById('delivery_time_update').value;
+            const feedback = document.getElementById('feedback_update').value;
+            const rating = document.getElementById('rating_update').value;
+            
+            // Convert minutes to TIME format (HH:MM:SS)
+            let delivery_time = null;
+            if (delivery_time_raw) {
+                const minutes = parseInt(delivery_time_raw);
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                delivery_time = String(hours).padStart(2, '0') + ':' + String(mins).padStart(2, '0') + ':00';
+            }
+            
+            fetch('/delivery/' + delivery_id + '/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ delivery_status, delivery_time, feedback, rating: rating ? parseInt(rating) : null })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Delivery updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

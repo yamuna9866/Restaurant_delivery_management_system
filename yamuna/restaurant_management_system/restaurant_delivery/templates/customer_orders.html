@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🍕 Restaurant Delivery System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="/customers" class="nav-link">Customers</a></li>
+                <li><a href="/orders" class="nav-link">Orders</a></li>
+                <li><a href="/staff" class="nav-link">Staff</a></li>
+                <li><a href="/deliveries" class="nav-link">Deliveries</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Orders for {{ customer.name }}</h2>
+        
+        <div class="customer-info">
+            <p><strong>Customer ID:</strong> {{ customer.customer_id }}</p>
+            <p><strong>Phone:</strong> {{ customer.phone }}</p>
+            <p><strong>Address:</strong> {{ customer.address }}</p>
+        </div>
+
+        <div class="table-section">
+            <h3>Order History</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if orders %}
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_id }}</td>
+                            <td>{{ order.order_date }}</td>
+                            <td>{{ order.order_time }}</td>
+                            <td>₹{{ order.order_amount }}</td>
+                            <td><span class="badge badge-{{ order.status|lower }}">{{ order.status }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 20px;">No orders found for this customer</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <a href="/customers" class="btn btn-secondary">Back to Customers</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Restaurant Delivery Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
